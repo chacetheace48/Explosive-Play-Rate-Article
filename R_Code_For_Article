@@ -1,0 +1,846 @@
+#### Explosive Play Rate Articler
+library(tidyverse)
+library(ggrepel)
+library(ggimage)
+library(gtsummary)
+library(stargazer)
+library(gt)
+library(nflfastR)
+
+### Get the data
+data_2020 <- load_pbp(2020)
+data_2019 <- load_pbp(2019)
+data_2018 <- load_pbp(2018)
+data_2017 <- load_pbp(2017)
+data_2016 <- load_pbp(2016)
+data_2015 <- load_pbp(2015)
+
+### Create the Datasets
+first_2020 <- data_2020 %>%
+  filter(pass == 1) %>%
+  filter(week < 9) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+first_2020$explosive_play2[is.na(first_2020$explosive_play2)] <- 0
+first_2020$explosive_play2_5[is.na(first_2020$explosive_play2_5)] <- 0
+first_2020$explosive_play20[is.na(first_2020$explosive_play20)] <- 0
+
+
+second_2020 <- data_2020 %>%
+  filter(pass == 1) %>%
+  filter(week >= 9) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+second_2020$explosive_play2[is.na(second_2020$explosive_play2)] <- 0
+second_2020$explosive_play2_5[is.na(second_2020$explosive_play2_5)] <- 0
+second_2020$explosive_play20[is.na(second_2020$explosive_play20)] <- 0
+
+
+
+
+total_2020 <- data_2020 %>%
+  filter(pass == 1) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+total_2020$explosive_play2[is.na(total_2020$explosive_play2)] <- 0
+total_2020$explosive_play2_5[is.na(total_2020$explosive_play2_5)] <- 0
+total_2020$explosive_play20[is.na(total_2020$explosive_play20)] <- 0
+
+playoff_2020 <- data_2020 %>%
+  filter(pass == 1) %>%
+  filter(season_type != "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+playoff_2020$explosive_play2[is.na(playoff_2020$explosive_play2)] <- 0
+playoff_2020$explosive_play2_5[is.na(playoff_2020$explosive_play2_5)] <- 0
+playoff_2020$explosive_play20[is.na(playoff_2020$explosive_play20)] <- 0
+
+
+### 2019
+first_2019 <- data_2019 %>%
+  filter(pass == 1) %>%
+  filter(week < 9) %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+first_2019$explosive_play2[is.na(first_2019$explosive_play2)] <- 0
+first_2019$explosive_play2_5[is.na(first_2019$explosive_play2_5)] <- 0
+first_2019$explosive_play20[is.na(first_2019$explosive_play20)] <- 0
+
+
+second_2019 <- data_2019 %>%
+  filter(pass == 1) %>%
+  filter(week >= 9) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+second_2019$explosive_play2[is.na(second_2019$explosive_play2)] <- 0
+second_2019$explosive_play2_5[is.na(second_2019$explosive_play2_5)] <- 0
+second_2019$explosive_play20[is.na(second_2019$explosive_play20)] <- 0
+
+total_2019 <- data_2019 %>%
+  filter(pass == 1) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+total_2019$explosive_play2[is.na(total_2019$explosive_play2)] <- 0
+total_2019$explosive_play2_5[is.na(total_2019$explosive_play2_5)] <- 0
+total_2019$explosive_play20[is.na(total_2019$explosive_play20)] <- 0
+
+playoff_2019 <- data_2019 %>%
+  filter(pass == 1) %>%
+  filter(season_type != "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+playoff_2019$explosive_play2[is.na(playoff_2019$explosive_play2)] <- 0
+playoff_2019$explosive_play2_5[is.na(playoff_2019$explosive_play2_5)] <- 0
+playoff_2019$explosive_play20[is.na(playoff_2019$explosive_play20)] <- 0
+
+
+### 2018
+first_2018 <- data_2018 %>%
+  filter(pass == 1) %>%
+  filter(week < 9) %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+first_2018$explosive_play2[is.na(first_2018$explosive_play2)] <- 0
+first_2018$explosive_play2_5[is.na(first_2018$explosive_play2_5)] <- 0
+first_2018$explosive_play20[is.na(first_2018$explosive_play20)] <- 0
+
+second_2018 <- data_2018 %>%
+  filter(pass == 1) %>%
+  filter(week >= 9) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+second_2018$explosive_play2[is.na(second_2018$explosive_play2)] <- 0
+second_2018$explosive_play2_5[is.na(second_2018$explosive_play2_5)] <- 0
+second_2018$explosive_play20[is.na(second_2018$explosive_play20)] <- 0
+
+total_2018 <- data_2018 %>%
+  filter(pass == 1) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+total_2018$explosive_play2[is.na(total_2018$explosive_play2)] <- 0
+total_2018$explosive_play2_5[is.na(total_2018$explosive_play2_5)] <- 0
+total_2018$explosive_play20[is.na(total_2018$explosive_play20)] <- 0
+
+playoff_2018 <- data_2018 %>%
+  filter(pass == 1) %>%
+  filter(season_type != "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+playoff_2018$explosive_play2[is.na(playoff_2018$explosive_play2)] <- 0
+playoff_2018$explosive_play2_5[is.na(playoff_2018$explosive_play2_5)] <- 0
+playoff_2018$explosive_play20[is.na(playoff_2018$explosive_play20)] <- 0
+
+
+### 2017
+first_2017 <- data_2017 %>%
+  filter(pass == 1) %>%
+  filter(week < 9) %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+first_2017$explosive_play2[is.na(first_2017$explosive_play2)] <- 0
+first_2017$explosive_play2_5[is.na(first_2017$explosive_play2_5)] <- 0
+first_2017$explosive_play20[is.na(first_2017$explosive_play20)] <- 0
+
+second_2017 <- data_2017 %>%
+  filter(pass == 1) %>%
+  filter(week >= 9) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+second_2017$explosive_play2[is.na(second_2017$explosive_play2)] <- 0
+second_2017$explosive_play2_5[is.na(second_2017$explosive_play2_5)] <- 0
+second_2017$explosive_play20[is.na(second_2017$explosive_play20)] <- 0
+
+total_2017 <- data_2017 %>%
+  filter(pass == 1) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+total_2017$explosive_play2[is.na(total_2017$explosive_play2)] <- 0
+total_2017$explosive_play2_5[is.na(total_2017$explosive_play2_5)] <- 0
+total_2017$explosive_play20[is.na(total_2017$explosive_play20)] <- 0
+
+playoff_2017 <- data_2017 %>%
+  filter(pass == 1) %>%
+  filter(season_type != "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+playoff_2017$explosive_play2[is.na(total_2017$explosive_play2)] <- 0
+total_2017$explosive_play2_5[is.na(total_2017$explosive_play2_5)] <- 0
+total_2017$explosive_play20[is.na(total_2017$explosive_play20)] <- 0
+
+### 2016
+first_2016 <- data_2016 %>%
+  filter(pass == 1) %>%
+  filter(week < 9) %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+first_2016$explosive_play2[is.na(first_2016$explosive_play2)] <- 0
+first_2016$explosive_play2_5[is.na(first_2016$explosive_play2_5)] <- 0
+first_2016$explosive_play20[is.na(first_2016$explosive_play20)] <- 0
+
+
+second_2016 <- data_2016 %>%
+  filter(pass == 1) %>%
+  filter(week >= 9) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+second_2016$explosive_play2[is.na(second_2016$explosive_play2)] <- 0
+second_2016$explosive_play2_5[is.na(second_2016$explosive_play2_5)] <- 0
+second_2016$explosive_play20[is.na(second_2016$explosive_play20)] <- 0
+
+total_2016 <- data_2016 %>%
+  filter(pass == 1) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+total_2016$explosive_play2[is.na(total_2016$explosive_play2)] <- 0
+total_2016$explosive_play2_5[is.na(total_2016$explosive_play2_5)] <- 0
+total_2016$explosive_play20[is.na(total_2016$explosive_play20)] <- 0
+
+playoff_2016 <- data_2016 %>%
+  filter(pass == 1) %>%
+  filter(season_type != "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+playoff_2016$explosive_play2[is.na(playoff_2016$explosive_play2)] <- 0
+playoff_2016$explosive_play2_5[is.na(playoff_2016$explosive_play2_5)] <- 0
+playoff_2016$explosive_play20[is.na(playoff_2016$explosive_play20)] <- 0
+
+
+### 2015
+first_2015 <- data_2015 %>%
+  filter(pass == 1) %>%
+  filter(week < 9) %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+first_2015$explosive_play2[is.na(first_2015$explosive_play2)] <- 0
+first_2015$explosive_play2_5[is.na(first_2015$explosive_play2_5)] <- 0
+first_2015$explosive_play20[is.na(first_2015$explosive_play20)] <- 0
+
+second_2015 <- data_2015 %>%
+  filter(pass == 1) %>%
+  filter(week >= 9) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+second_2015$explosive_play2[is.na(second_2015$explosive_play2)] <- 0
+second_2015$explosive_play2_5[is.na(second_2015$explosive_play2_5)] <- 0
+second_2015$explosive_play20[is.na(second_2015$explosive_play20)] <- 0
+
+total_2015 <- data_2015 %>%
+  filter(pass == 1) %>%
+  filter(season_type == "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+total_2015$explosive_play2[is.na(total_2015$explosive_play2)] <- 0
+total_2015$explosive_play2_5[is.na(total_2015$explosive_play2_5)] <- 0
+total_2015$explosive_play20[is.na(total_2015$explosive_play20)] <- 0
+
+playoff_2015 <- data_2015 %>%
+  filter(pass == 1) %>%
+  filter(season_type != "REG") %>%
+  mutate(explosive_play2 = case_when(epa > 2 ~ 1)) %>%
+  mutate(explosive_play2_5 = case_when(epa > 2.5~ 1)) %>%
+  mutate(explosive_play20 = case_when(yards_gained > 20 ~ 1))
+
+playoff_2015$explosive_play2[is.na(playoff_2015$explosive_play2)] <- 0
+playoff_2015$explosive_play2_5[is.na(playoff_2015$explosive_play2_5)] <- 0
+playoff_2015$explosive_play20[is.na(playoff_2015$explosive_play20)] <- 0
+
+#### Begin Garther Team Data
+
+first_2020_explosive <- first_2020 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+second_2020_explosive <- second_2020 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+total_2020_explosive <- total_2020 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+playoff_2020_explosive <- playoff_2020 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+### 2019 Team Level Data
+
+first_2019_explosive <- first_2019 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+second_2019_explosive <- second_2019 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+total_2019_explosive <- total_2019 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+playoff_2019_explosive <- playoff_2019 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+### 2018 Data
+
+first_2018_explosive <- first_2018 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+second_2018_explosive <- second_2018 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+total_2018_explosive <- total_2018 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+playoff_2018_explosive <- playoff_2018 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+### 2017 Data
+
+first_2017_explosive <- first_2017 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+second_2017_explosive <- second_2017 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+total_2017_explosive <- total_2017 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+playoff_2017_explosive <- playoff_2017 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+### 2016 Data
+
+first_2016_explosive <- first_2016 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+second_2016_explosive <- second_2016 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+total_2016_explosive <- total_2016 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+playoff_2016_explosive <- playoff_2016 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+### 2016 Data
+
+first_2016_explosive <- first_2016 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+second_2016_explosive <- second_2016 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+total_2016_explosive <- total_2016 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+playoff_2016_explosive <- playoff_2016 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+### 2015 Data
+
+first_2015_explosive <- first_2015 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+second_2015_explosive <- second_2015 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+total_2015_explosive <- total_2015 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+playoff_2015_explosive <- playoff_2015 %>%
+  filter(epa != "NA") %>%
+  group_by(posteam) %>%
+  summarise(
+    num_db = n(),
+    EPA_Per_Play = sum(epa) / num_db,
+    explosive_plays2 = sum(explosive_play2),
+    explosive_plays2_5 = sum(explosive_play2_5),
+    explosive_plays20 = sum(explosive_play20)) %>%
+  mutate(explosive_play_Rate2 = explosive_plays2 / num_db) %>%
+  mutate(explosive_play_Rate2_5 = explosive_plays2_5 / num_db) %>%
+  mutate(explosive_play_rate20 = explosive_plays20 / num_db)
+
+
+### This way we will be predicting .x's by putting the second first, creating a combination of all the datasets
+first_to_second_2020 <- left_join(second_2020_explosive, first_2020_explosive, by = "posteam")
+first_to_second_2019 <- left_join(second_2019_explosive, first_2019_explosive, by = "posteam")
+first_to_second_2018 <- left_join(second_2018_explosive, first_2018_explosive, by = "posteam")
+first_to_second_2017 <- left_join(second_2017_explosive, first_2017_explosive, by = "posteam")
+first_to_second_2016 <- left_join(second_2016_explosive, first_2016_explosive, by = "posteam")
+first_to_second_2015 <- left_join(second_2015_explosive, first_2015_explosive, by = "posteam")
+
+full_first_to_second <- rbind(first_to_second_2020,first_to_second_2019,first_to_second_2018,first_to_second_2017,first_to_second_2016,first_to_second_2015)
+
+glimpse(full_first_to_second)
+
+
+
+### Out of curiosity
+test_regression2 <- lm(data = full_first_to_second, EPA_Per_Play.x ~ EPA_Per_Play.y + explosive_play_Rate2.y)
+summary(test_regression2)
+
+test_regression25 <- lm(data = full_first_to_second, EPA_Per_Play.x ~ EPA_Per_Play.y + explosive_play_Rate2_5.y)
+summary(test_regression25)
+
+test_regression20 <- lm(data = full_first_to_second, EPA_Per_Play.x ~ EPA_Per_Play.y + explosive_play_rate20.y)
+summary(test_regression20)
+
+##### Create the regular season to playoff datasets
+total_to_playoffs_2020 <- left_join(playoff_2020_explosive, total_2020_explosive, by = "posteam")
+total_to_playoffs_2019 <- left_join(playoff_2019_explosive, total_2019_explosive, by = "posteam")
+total_to_playoffs_2018 <- left_join(playoff_2018_explosive, total_2018_explosive, by = "posteam")
+total_to_playoffs_2017 <- left_join(playoff_2017_explosive, total_2017_explosive, by = "posteam")
+total_to_playoffs_2016 <- left_join(playoff_2016_explosive, total_2016_explosive, by = "posteam")
+total_to_playoffs_2015 <- left_join(playoff_2015_explosive, total_2015_explosive, by = "posteam")
+
+### Get the 5 year to playoffs datast
+full_to_playoffs <- rbind(total_to_playoffs_2020,total_to_playoffs_2019,total_to_playoffs_2018,total_to_playoffs_2017,total_to_playoffs_2016,total_to_playoffs_2015)
+
+glimpse(full_first_to_second)
+
+ptest_regression2 <- lm(data = full_to_playoffs, EPA_Per_Play.x ~ EPA_Per_Play.y + explosive_play_Rate2.y)
+summary(ptest_regression2)
+
+ptest_regression25 <- lm(data = full_to_playoffs, EPA_Per_Play.x ~ EPA_Per_Play.y + explosive_play_Rate2_5.y)
+summary(ptest_regression25)
+
+ptest_regression20 <- lm(data = full_to_playoffs, EPA_Per_Play.x ~ EPA_Per_Play.y + explosive_play_rate20.y)
+summary(ptest_regression20)
+
+
+### Explosive Play Rate Prediction Graph
+
+
+
+glimpse(full_first_to_second)
+full_first_to_second
+
+
+base_regression <- lm(data = full_first_to_second, EPA_Per_Play.x ~  explosive_play_Rate2.y)
+summary(base_regression)
+
+reg_season_split <- ggplot(full_first_to_second, aes(x= EPA_Per_Play.x,y=explosive_play_Rate2.y)) +
+  geom_vline(xintercept =  mean(full_first_to_second$EPA_Per_Play.x), color = "red", linetype = "dashed") +
+  geom_hline(yintercept =  mean(full_first_to_second$explosive_play_Rate2.y), color = "red", linetype = "dashed") +
+  geom_point() +
+  labs(x = "Second Half EPA Per Pass",
+       y="First Half Explosive Play Rate",
+       caption = "Data from nflfastR, Chart By @CMHockey66",
+       title = "Is Explosive Play Rate Predictive of Future Efficiency?",
+       subtitle = "'Explosive' Play Defined as > 2 EPA. Regular Season Pass Plays Only. 2015-20") +
+  theme_bw() + 
+  geom_smooth(method = "lm") +
+  theme(axis.title = element_text(size = 12),
+        axis.text = element_text(size = 10),
+        plot.title = element_text(size = 16),
+        plot.subtitle = element_text(size = 14),
+        plot.caption = element_text(size = 12)) +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust=0.5))
+
+reg_season_split
+
+
+
+
+
+tbl_regression(test_regression2)  %>%
+  as_gt() %>%
+  gt::tab_source_note(gt::md("Smaller P value Represents Stronger Predictors. Target variable is Second Half EPA Per Pass, Using First Half Data. 'Explosive Play' is > 2 EPA"))
+
+tbl_regression(test_regression25)  %>%
+  as_gt() %>%
+  gt::tab_source_note(gt::md("Smaller P value Represents Stronger Predictors. Target variable is Second Half EPA Per Pass, Using First Half Data. 'Explosive Play' is > 2.5 EPA"))
+
+tbl_regression(test_regression20)  %>%
+  as_gt() %>%
+  gt::tab_source_note(gt::md("Smaller P value Represents Stronger Predictors. Target variable is Second Half EPA Per Pass, Using First Half Data. 'Explosive Play' is > 2.5 EPA"))
+
+
+
+tbl_regression(ptest_regression2)  %>%
+  as_gt() %>%
+  gt::tab_source_note(gt::md("Smaller P value Represents Stronger Predictors. Target variable is Playoff EPA Per Pass, Using Regular Season Data. 'Explosive Play' is > 2 EPA"))
+
+tbl_regression(ptest_regression25)  %>%
+  as_gt() %>%
+  gt::tab_source_note(gt::md("Smaller P value Represents Stronger Predictors. Target variable is Playoff EPA Per Pass, Using Regular Season Data. 'Explosive Play' is > 2.5 EPA"))
+
+
+tbl_regression(ptest_regression20)  %>%
+  as_gt() %>%
+  gt::tab_source_note(gt::md("Smaller P value Represents Stronger Predictors. Target variable is Playoff EPA Per Pass, Using Regular Season Data. 'Explosive Play' is > 20 Yards Gained"))
+
+
+
+
+
+
+tbl_regression(ptest_regression25)
+tbl_regression(ptest_regression20)
+
+
+
+find_resids <- lm(data = full_first_to_second, explosive_play_Rate2.y  ~ EPA_Per_Play.y)
+summary(find_resids)
+
+residuals_for_article <- full_first_to_second %>%
+  mutate(expected_explosive = 0.088144 + 0.099680*EPA_Per_Play.y) %>%
+  mutate(epa_resid = expected_explosive - explosive_play_Rate2.y) %>%
+  mutate(independant_varaition_explo = epa_resid)
+
+explosive_value <- lm(data = residuals_for_article, EPA_Per_Play.x  ~ independant_varaition_explo)
+summary(explosive_value)
+
+independant_var_explo <- ggplot(residuals_for_article, aes(x= EPA_Per_Play.x,y=independant_varaition_explo)) +
+  geom_vline(xintercept =  mean(residuals_for_article$EPA_Per_Play.x), color = "red", linetype = "dashed") +
+  geom_hline(yintercept =  mean(residuals_for_article$independant_varaition_explo), color = "red", linetype = "dashed") +
+  geom_point() +
+  labs(x = "Second Half EPA Per Pass",
+       y="Independant Variation in First Half Explosive Play Rate",
+       caption = "Data from nflfastR, 2015-20, Chart By @CMHockey66",
+       title = "Is Explosive Play Rate Predictive of Future Efficiency?",
+       subtitle = "'Explosive' Play Defined as > 2 EPA. Reg. Season Passes Only. Explosive Play Rate 'Idependant' of EPA") +
+  theme_bw() + 
+  geom_smooth(method = "lm") +
+  theme(axis.title = element_text(size = 12),
+        axis.text = element_text(size = 10),
+        plot.title = element_text(size = 16),
+        plot.subtitle = element_text(size = 14),
+        plot.caption = element_text(size = 12)) +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust=0.5))
+
+independant_var_explo
